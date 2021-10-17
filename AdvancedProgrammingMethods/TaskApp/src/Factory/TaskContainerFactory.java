@@ -1,6 +1,7 @@
 package Factory;
 
 import Containers.Container;
+import Containers.QueueContainer;
 import Containers.StackContainer;
 import Containers.Strategy;
 
@@ -19,8 +20,9 @@ public class TaskContainerFactory implements Factory{
         if(strategy == strategy.LIFO){
             return  new StackContainer();
         }
-        else{
-            return null; //Queue container
+        else if(strategy == strategy.FIFO){
+            return new QueueContainer();
         }
+        return null;
     }
 }

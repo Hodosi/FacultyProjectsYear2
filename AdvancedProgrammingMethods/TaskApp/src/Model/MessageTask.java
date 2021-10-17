@@ -18,6 +18,22 @@ public class MessageTask extends Task{
         this.date = date;
     }
 
+    public String getMessage() {
+        return message;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public String getTo() {
+        return to;
+    }
+
+    public LocalDateTime getDate() {
+        return date;
+    }
+
     @Override
     public String toString() {
         return super.toString() + " " + message + " " + from + " " + to + " " + date.format(DATE_TIME_FORMATTER);

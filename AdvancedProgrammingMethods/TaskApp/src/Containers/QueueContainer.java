@@ -2,25 +2,27 @@ package Containers;
 
 import Model.Task;
 
-//public class StackContainer implements Container{
-public class StackContainer extends AbstractContainer{
+//public class QueueContainer implements Container{
+public class QueueContainer extends AbstractContainer{
 //    private Task[] tasks;
 //    private int size;
 //
-//    public StackContainer() {
+//    public QueueContainer() {
 //        this.tasks = new Task[INITIAL_TASK_SIZE];
 //        this.size = 0;
 //    }
 
-    public StackContainer(){
+    public QueueContainer(){
         super();
     }
 
     @Override
     public Task remove() {
         if(!isEmpty()){
+            Task firstTaskInQueue = tasks[0];
             size--;
-            return tasks[size];
+            System.arraycopy(tasks, 1, tasks, 0, size);
+            return firstTaskInQueue;
         }
         return null;
     }
@@ -35,14 +37,12 @@ public class StackContainer extends AbstractContainer{
 //        }
 //        tasks[size] = task;
 //        size++;
-//
 //    }
 //
 //    @Override
 //    public int size() {
 //        return size;
 //    }
-//
 //
 //    @Override
 //    public boolean isEmpty() {

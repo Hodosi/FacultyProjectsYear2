@@ -4,15 +4,6 @@ import java.util.Objects;
 
 public abstract class Task {
     private String task_id;
-
-    public void setTask_id(String task_id) {
-        this.task_id = task_id;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
     private String description;
 
     public Task(String task_id, String description) {
@@ -20,8 +11,20 @@ public abstract class Task {
         this.description = description;
     }
 
+    public String getTask_id() {
+        return task_id;
+    }
+
     public String getDescription() {
         return description;
+    }
+
+    public void setTask_id(String task_id) {
+        this.task_id = task_id;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -44,11 +47,6 @@ public abstract class Task {
 
         Task task = (Task) obj;
         return Objects.equals(getTask_id(), task.getTask_id()) && Objects.equals(getDescription(), task.getDescription());
-    }
-
-
-    public String getTask_id() {
-        return task_id;
     }
 
     public abstract void execute();
