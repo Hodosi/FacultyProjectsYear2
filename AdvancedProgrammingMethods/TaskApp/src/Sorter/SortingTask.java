@@ -15,6 +15,7 @@ public class SortingTask extends Task {
     public void execute() {}
 
     public void execute(int[] numbers, SortingStrategy strategy) {
+        System.out.println(Arrays.toString(numbers));
         SorterFactory sorterFactory = SorterFactory.getInstance();
         AbstractSorter abstractSorter = sorterFactory.createSorter(strategy);
         int[] sortedNumbers = abstractSorter.sort(numbers);

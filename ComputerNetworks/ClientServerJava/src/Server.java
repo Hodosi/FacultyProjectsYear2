@@ -7,7 +7,8 @@ public class Server {
 
     public static void main(String[] args) throws IOException {
         final int PORT = 5050;
-        final InetAddress IP = InetAddress.getByName("localhost");
+        // final InetAddress IP = InetAddress.getByName("localhost");
+        final InetAddress IP = InetAddress.getByName("127.0.0.1");
         final SocketAddress socketAddress = new InetSocketAddress(IP, PORT);
 
         ServerSocket serverSocket = new ServerSocket();
@@ -58,21 +59,22 @@ class ClientHandler extends Thread{
         while (true) {
             try{
                 String msg_length_string = dis.readUTF();
-                if (!msg_length_string.equals("")) {
-                    int msg_length = Integer.parseInt(msg_length_string);
-                    System.out.println("Client message length: " + socket + ": " + String.valueOf(msg_length));
+                int msg_length = Integer.parseInt(msg_length_string);
+                System.out.println("Client message length: " + socket + ": " + String.valueOf(msg_length));
 
-                    String msg = dis.readUTF();
-                    if (msg.equals(DISCONNECT_MESSAGE)) {
-                        System.out.println("A new Client is disconnected: " + socket);
-                        this.socket.close();
-                        System.out.println("Connection closed");
-                        break;
-                    }
-
-                    dos.writeUTF("Message received");
-                    System.out.println("Response of client: " + socket + ": " + msg);
+                String msg = "";
+                if(msg_length > 0){
+                    msg = dis.readUTF();
                 }
+                if (msg.equals(DISCONNECT_MESSAGE)) {
+                    System.out.println("A new Client is disconnected: " + socket);
+                    this.socket.close();
+                    System.out.println("Connection closed for client: " + socket);
+                    break;
+                }
+
+                dos.writeUTF("Message received");
+                System.out.println("Response of client: " + socket + ": " + msg);
             }
             catch (Exception e){
                 System.out.println("Client Handler Exception: " + e);

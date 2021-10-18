@@ -3,6 +3,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Base64;
 import java.util.Scanner;
 
 public class Client {
@@ -11,7 +12,8 @@ public class Client {
 
         try{
             final int PORT = 5050;
-            final InetAddress IP = InetAddress.getByName("localhost");
+            //final InetAddress IP = InetAddress.getByName("localhost");
+            final InetAddress IP = InetAddress.getByName("127.0.0.1");
 
             Socket client = new Socket(IP, PORT);
 
@@ -24,7 +26,9 @@ public class Client {
                 String msg_length = String.valueOf(msg.length());
 
                 dos.writeUTF(msg_length);
-                dos.writeUTF(msg);
+                if(!msg_length.equals("0")){
+                    dos.writeUTF(msg);
+                }
 
                 if(msg.equals(DISCONNECT_MESSAGE)){
                     client.close();
