@@ -1,0 +1,12 @@
+The server and client are playing WAR.
+  The client sends an integer between 4 and 9 to the server.
+  The server receives the number and generates an array of size n x n which it initializes with 0.
+  After this the server generates n positions in the matrix (of the type (row, column)) which it initializes with 1 (the positions of the planes).
+  The server sends the client a message informing him that the game has started.
+  The client sends to the server the position where he thinks an airplane is.
+  The server responds to the client:
+- with "YES" (the plane was bombed) or "NO" (the plane was not bombed)
+- with the number of mistakes
+- with the number of non-bombed planes.
+  The game continues until the client bombs all the planes or makes 5 mistakes (the severe one counts the mistakes).
+  At the end of the game the server sends the client the conclusion of the game.
