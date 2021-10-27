@@ -17,16 +17,21 @@ def start():
     print("ServerSocket: " + str(ADDRESS))
 
     while True:
-        bytes_address_pair = server.recvfrom(BUFFER_SIZE)
-        client_message = bytes_address_pair[0]
-        client_address = bytes_address_pair[1]
+        handleMessage()
+        handleMessage()
 
-        print("Client address: " + str(client_address))
-        print("Client message: " + client_message.decode().strip())
 
-        server_response = "Message received"
-        server_response += b' ' * (BUFFER_SIZE - len(server_response))
-        server.sendto(server_response, client_address)
+def handleMessage():
+    bytes_address_pair = server.recvfrom(BUFFER_SIZE)
+    client_message = bytes_address_pair[0]
+    client_address = bytes_address_pair[1]
+
+    print("Client address: " + str(client_address))
+    print("Client message: " + client_message.decode().strip())
+
+    server_response = "Message received"
+    server_response += b' ' * (BUFFER_SIZE - len(server_response))
+    server.sendto(server_response, client_address)
 
 
 start()
