@@ -1,3 +1,5 @@
+USE NationalFootballLeagues;
+
 SELECT T.id_team, T.name_team, C.last_name_coach, C.first_name_coach, P.last_name_player FROM Teams T
 INNER JOIN Coaches C ON T.id_coach=C.id_coach INNER JOIN Players P ON T.id_team=P.id_team;
 
@@ -95,3 +97,34 @@ INNER JOIN RefereesGames RG ON RG.id_game=GM.id_game
 INNER JOIN Referees R ON RG.id_referee=R.id_referee
 GROUP BY TH.name_team, TG.name_team;
 
+
+SELECT T.name_team, P.last_name_player FROM Teams T
+INNER JOIN Players P ON T.id_team = P.id_team
+INNER JOIN Goals G On G.id_player = P.id_player
+
+SELECT TH.name_team , TG.name_team,
+COUNT(P.id_player)
+--COUNT(case when P.id_team = TH.id_team then 1 else 0 end),
+--COUNT(case when P.id_team = TG.id_team then 1 else 0 end)
+FROM Games GM
+INNER JOIN Teams TH ON TH.id_team=GM.id_team_host
+INNER JOIN Teams TG ON TG.id_team=GM.id_team_guest
+LEFT JOIN Goals G ON G.id_game = GM.id_game
+LEFT JOIN Players P ON G.id_player = P.id_player
+WHERE CONVERT(date, GM.date_time)<GETDATE()
+GROUP BY TH.name_team , TG.name_team;
+
+
+SELECT TH.name_team , TG.name_team,
+COUNT(GH.id_goal) AS [goals_host], COUNT(DISTINCT GG.id_goal) AS [goals_guest]
+FROM Games GM
+INNER JOIN Teams TH ON TH.id_team=GM.id_team_host
+INNER JOIN Teams TG ON TG.id_team=GM.id_team_guest
+INNER JOIN Players PH ON PH.id_team = TH.id_team
+INNER JOIN Players PG ON PG.id_team = TG.id_team
+INNER JOIN Goals GH ON GH.id_game = GM.id_game
+INNER JOIN Goals GG ON GG.id_game = GM.id_game
+WHERE CONVERT(date, Gm.date_time)<GETDATE()
+and (GH.id_player = PH.id_player 
+and GG.id_player = PG.id_player)
+GROUP BY TH.name_team , TG.name_team;
