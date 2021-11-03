@@ -64,14 +64,15 @@ HAVING COUNT(T.id_team)>=2;
 --nr_more_than_2_tables = 7, nr_where = 5, nr_group_by = 3
 --extract all game results with games in which both of the teams has scored
 SELECT TH.name_team , TG.name_team,
-COUNT(GH.id_goal) AS [goals_host], COUNT(DISTINCT GG.id_goal) AS [goals_guest]
+COUNT(DISTINCT GH.id_goal) AS [goals_host], COUNT(DISTINCT GG.id_goal) AS [goals_guest]
+--COUNT(*) AS [goals_host], COUNT(*) AS [goals_guest]
 FROM Games GM
-INNER JOIN Teams TH ON TH.id_team=GM.id_team_host
-INNER JOIN Teams TG ON TG.id_team=GM.id_team_guest
-INNER JOIN Players PH ON PH.id_team = TH.id_team
-INNER JOIN Players PG ON PG.id_team = TG.id_team
-INNER JOIN Goals GH ON GH.id_game = GM.id_game
-INNER JOIN Goals GG ON GG.id_game = GM.id_game
+left JOIN Teams TH ON TH.id_team=GM.id_team_host
+left JOIN Teams TG ON TG.id_team=GM.id_team_guest
+left JOIN Players PH ON PH.id_team = TH.id_team
+left JOIN Players PG ON PG.id_team = TG.id_team
+left JOIN Goals GH ON GH.id_game = GM.id_game
+left JOIN Goals GG ON GG.id_game = GM.id_game
 WHERE CONVERT(date, Gm.date_time)<GETDATE()
 and (GH.id_player = PH.id_player 
 and GG.id_player = PG.id_player)

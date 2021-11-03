@@ -1,0 +1,150 @@
+15.
+
+a) Sa se determine cea mai lunga secventa de numere pare consecutive dintr-o 
+lista (daca sunt mai multe secvente de lungime maxima, una dintre ele).
+b) Se da o lista eterogena, formata din numere intregi si liste de numere 
+intregi. Sa se inlocuiasca fiecare sublista cu cea mai lunga secventa de 
+numere pare consecutive din sublista respectiva. De ex:
+[1, [2, 1, 4, 6, 7], 5, [1, 2, 3, 4], 2, [1, 4, 6, 8, 3], 2, [1, 5], 3] =>
+[1, [4, 6], 5, [2], 2, [4, 6, 8], 2, [], 3]
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+A.)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+l = lista 
+n = lungime lista
+lungime = lungimea secventei pare incepand de la l1 inclusiv
+
+lungimeSecventaPara(l1l2...ln, lungime) = {0                                         , n = 0
+                                          {0                                         , l1 impar
+                                          {1 + lungimeSecventaPara(l2...ln, lungime) , l1 par
+
+Exemple de testare:
+
+lungimeSecventaPara([], lungime) = 0
+lungimeSecventaPara([1,2,3,4,6], lungime) = 0
+lungimeSecventaPara([2,4,5,6,8,10], lungime) = 2
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+l = lista
+n = lungime lista l
+lungimi = lista cu lungimile secventelor pare incepand de pe pozitia i
+adica rez[i] = 0                                        , l1 impar
+      rez[i] = lungimeSecventaPara(l1l2...ln, lungime)  , l2 par
+
+lungimiSecventePare(l1l2...ln, lungimi) = { ()                                                                              , n = 0
+                                          { lungimeSecventaPara(l1l2...ln, lungime) + lungimiSecventePare(l2...ln, lungimi) , altfel
+     
+Exemple de testare:
+                                      
+lungimiSecventePare([], lungimi) = [0]
+lungimiSecventePare([1,2,3,1], lungimi) = [0,1,0,0]
+lungimiSecventePare([2,4,5,4,2,6,3], lungimi) = [2,1,0,3,2,1,0]
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+l = lista 
+n = lungime lista l
+m = elementul maxim din lista
+
+maxim(l1l2..ln, m) = { l1               , n = 1
+                     { maxim(l2l3...ln) , l1 < m
+                     { l1               , altfel   
+
+Exemple de testare:
+
+maxim([4], m) = 4
+maxim([1,3,4,2,5,1], m) = 5
+maxim([4,3,1], m) = 4
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+l = lista
+n = lungime lista l
+p = lista rezultata din lungimiSecventePare
+lungime = valoarea maxima din lista p
+
+lungimeMaximaSecventaPara(l1l2...ln, lungime) = { ()                , n = 0
+                                                { maxim(p1p2...pn)  , altfel
+
+
+Exemple de testare:
+
+lungimeMaximaSecventaPara([], lungime) = 0
+lungimeMaximaSecventaPara([2, 3, 4, 6, 1], lungime) = 2
+lungimeMaximaSecventaPara([1, 3, 5], lungime) = 0
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+l = lista
+n = lungime lista l
+p = lista rezultata cu secventa para consecutiva de la l1
+lungime = lungimea secventei pare
+
+
+secventaPara(l1l2...ln, p1p2...pn, lungime) = { () ; 0                                                         , n = 0
+                                              { () ; 0                                                         , l1 impar
+                                              { l1 + secventaPara(l2l3...ln, p1p2...pn, lungime) ; 1 + lungime , l1 par        
+
+Exemple de testare:
+
+secventaPara([], p1p2...pn, lungime) = [] ; 0
+secventaPara([1,2,4,6], p1p2...pn, lungime) = [] ; 0
+secventaPara([2,4,6,1,4], p1p2...pn, lungime) = [2, 4, 6] ; 3
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+l = lista
+n = lungime lista l
+p = secventa para maxima consecutiva din l1
+m = lungimea secventei p
+lungime = lungimea secventei pare maxime
+
+secventaMaxima(l1l2...ln, p1p2...pn, lungime) = { ()                                          , n = 0
+                                                { secventaPara(l1l2...ln, p1p2...pn, m)       , m = lungime
+                                                { secventaMaxima(l2...ln, p1p2...pn, lungime) , altfel
+
+
+Exemple de testare:
+
+secventaMaxima([], p1p2...pn, 0) = []
+secventaMaxima([1,2,3], p1p2...pn, 1) = [2]
+secventaMaxima([1,2,3,4,6,3,8,4,1], p1p2...pn, 2) = [4, 6]
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+
+l = lista
+n = lungime lista l
+p = lista cu secventa maxima de numere pare consecutive in l
+lmax = lungimea secventei maxime
+
+secventaMaximaMain(l1l2...ln, p1p2...p3) = { ()                                         , n = 0
+                                           { secventaMaxima(l1l2...ln, p1p2...pn, lmax) , altfel
+
+Exemple de testare: 
+
+secventaMaximaMain([], p1p2...pn, lungime) = []
+secventaMaximaMain([1,2,3], p1p2...pn, lungime) = [2]
+secventaMaximaMain([1,2,3,4,6,3,8,4,1], p1p2...pn, lungime) = [4, 6]
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------- 
+B.)
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+l = lista eterogena
+n = lungime l
+p = lista dupa transformari
+sec = secventa maxima din dintr-o lista din l
+
+inlocuire(l1l2...ln, p1p2...pn) = { () , n = 0 
+                                  { l1 + inlocuire(l2...ln)            , l1 is number
+                                  { inlocuire(l1) + inlocuire(l2...ln) , l1 is list
+
+Exemple de testare:
+
+inlocuire([], p1p2...pn) = []
+inlocuire([1,[1], 2, 3, [2,3,4,6]], p1p2...pn) = [1, [], 2, 3, [4, 6]]
+inlocuire([1,[1,2], 2, 3, [4,6,1,6,8], 2], p1p2...pn) = [1, [2], 2, 3, [4, 6], 2]
+
+----------------------------------------------------------------------------------------------------------------------------------------------------------- 
