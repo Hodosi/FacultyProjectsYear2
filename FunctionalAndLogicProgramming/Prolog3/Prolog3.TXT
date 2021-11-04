@@ -1,0 +1,72 @@
+14.
+ Sa se scrie un program care genereaza lista submultimilor de suma S data,cu 
+elementele unei liste. Ex: [1,2,3,4,5,6,10] si S=10 => [[1,2,3,4], [1,4,5], 
+[2,3,5], [4,6], [10]]
+ (nu neaparat in aceasta ordine)
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+l = lista
+n = lungimea listei l
+e = un element din lista
+
+candidat(l1l2..ln, e) = { false                 , n = 0
+                          l1, candidat(l2...ln) , n > 0
+
+Exemple de testare:
+
+candidat([], e) = false
+candidat([4,5], e) = 4
+candidat([10], e) = 10
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+l = lista
+n = lungimea listei l
+s = suma dorita, int
+r = lista rezultata
+c = list, colecteaza solutia,
+sCol = reprezinta suma elementelor din colectoare
+ 
+solutie_aux(l1l2...ln, s, r1r2...rn, c1c2...cn, sCol) 
+	= { candidat(l1l2...ln, e) si
+            solutie_aux(l1l2..ln, s, r1r2...rn, e + c1c2...cn, sCol + e) , e < c1, sCol + e <= s
+          { c1c2...cn                                                    , sCol = s   
+
+Exemple de testare:
+
+solutie_aux([1,2,3,4,5], 15, Rez, [4], 4) = false
+solutie_aux([1,2,3,4,5], 10, Rez, [4], 4) = [1,2,3,4]
+solutie_aux([1,2,3,4,5], 7, Rez, [4], 4) = [1,2,4]
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+l = lista
+n = lungimea listei l
+s = suma dorita, int
+r = lista rezultata
+
+solutie(l1l2...ln, s, r1r2...rn) = { candidat(l1l2...ln, e) si
+                                     solutie_aux(l1l2...ln, s, r1r2...rn, [e], e) , e <= s
+
+Exemple de testare:
+
+solutie([1,2], 10, Rez) = false
+solutie([1,2,3,4,6], 10, Rez) = [1,2,3,4]
+solutie([1,2,3,4,5], 15 , Rez) = [1,2,3,4,5]
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+l = lista
+n = lungimea listei l
+s = suma dorita, int
+r = lista rezultata
+
+solutieSuma(l1l2...ln, s, r1r2...rn) = { toate(solutie(l1l2...ln, s, r1r2...rn))
+
+Exemple de testare:
+
+solutieSuma([1,2,3,4,5], 20 , Rez) = []
+solutieSuma([1,2,3,4,5], 9 , Rez) = [[2, 3, 4], [1, 3, 5], [4, 5]]
+solutieSuma([1,2,3,4,5], 4 , Rez) = [[1, 3], [4]]
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
