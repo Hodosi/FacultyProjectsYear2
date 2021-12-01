@@ -1,0 +1,43 @@
+4. Sa se converteasca un arbore de tipul (2) la un arbore de tipul (1).
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+De exemplu arborele
+  A
+ / \
+B   C
+   / \
+  D   E
+se poate reprezenta astfel in cele doua moduri:
+(A 2 B 0 C 2 D 0 E 0)   (1)
+(A (B) (C (D) (E)))     (2)
+
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+s - expresie
+
+isnotnull(s) = { 0 , s = ()
+               { 1 , altfel
+
+Exemple de testare:
+
+isnotnull( () ) = 0
+isnotnull( A ) = 1
+isnotnull( (A(B C)) ) = 1
+
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+
+l - arbore binar reprezentat sub forma unei liste de tip 2
+
+preordine(l1l2l3...ln) = { nil                                                                                                  , l1 = ()
+                       = { l1 (+) (isnotnull(l2l3...ln) + isnotnull(l3...ln)) (+) preordine(l2l3...ln) (+) preordine(l3...ln)   , altfel
+
+Exemple de testare:
+
+preordine( () ) = nil
+preordine( (A (B) (C (D) (E))) ) = (A 2 B 0 C 2 D 0 E 0)
+preordine( (A (B () (F)) (C (D) (E))) ) = (A 2 B 1 F 0 C 2 D 0 E 0)
+
+  
+
