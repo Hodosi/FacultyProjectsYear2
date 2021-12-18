@@ -30,7 +30,7 @@ isnotnull( (A(B C)) ) = 1
 
 l - arbore binar reprezentat sub forma unei liste de tip 2
 
-preordine(l1l2l3...ln) = { nil                                                                                                  , l1 = ()
+preordine(l1l2l3...ln) = { nil                                                                                                  , n = 0
                        = { l1 (+) (isnotnull(l2l3...ln) + isnotnull(l3...ln)) (+) preordine(l2l3...ln) (+) preordine(l3...ln)   , altfel
 
 Exemple de testare:

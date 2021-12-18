@@ -200,7 +200,7 @@ AS
 			SET @insert_end = GETDATE();
 			
 			INSERT INTO TestRuns(Description, StartAt, EndAt) VALUES
-			(@table_name, @delete_start, @delete_end);
+			(@table_name, @insert_start, @insert_end);
 
 			SET @crt_position = @crt_position - 1;
 		END
@@ -260,3 +260,12 @@ GO
 
 DBCC CHECKIDENT ('[TestRuns]', RESEED, 0);
 GO
+
+DELETE FROM TestRuns
+DELETE FROM TestRunTables
+DELETE FROM TestRunViews
+GO
+
+SELECT * From TestRuns
+Select * from TestRunTables
+Select * from TestRunViews
