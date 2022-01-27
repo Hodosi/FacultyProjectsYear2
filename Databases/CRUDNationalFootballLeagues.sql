@@ -173,6 +173,7 @@ print dbo.validateGame(1, 1, 1, '2021-11-08 21:45:00:00');
 print dbo.validateGame(1, 4, 6, '2021-11-08 21:45:00:00');
 go
 
+select * from Games;
 EXEC createGame @id_league=11, @id_team_host=1, @id_team_guest=2, @date_time='2021-11-08 21:45:00:00';
 EXEC createGame @id_league=1, @id_team_host=11, @id_team_guest=1, @date_time='2021-11-08 21:45:00:00';
 EXEC createGame @id_league=1, @id_team_host=1, @id_team_guest=11, @date_time='2021-11-08 21:45:00:00';
@@ -184,10 +185,10 @@ EXEC readGame @id_league=1, @id_team_host=4, @id_team_guest=6;
 
 select * from Games;
 EXEC updateGame @id_game=11, @id_league=23, @id_team_host=6, @id_team_guest=4, @date_time='2021-07-08 21:45:00:00';
-EXEC updateGame @id_game=11, @id_league=2, @id_team_host=6, @id_team_guest=4, @date_time='2021-07-08 21:45:00:00';
+EXEC updateGame @id_game=13, @id_league=2, @id_team_host=6, @id_team_guest=4, @date_time='2021-07-08 21:45:00:00';
 select * from Games;
 
-EXEC deleteGame @id_game=12
+EXEC deleteGame @id_game=13
 select * from Games;
 
 print dbo.validateReferee('', '')
@@ -206,10 +207,10 @@ EXEC readReferee @last_name_referee='a', @first_name_referee='b';
 
 select * from Referees;
 EXEC updateReferee @id_referee=11, @last_name_referee='', @first_name_referee='';
-EXEC updateReferee @id_referee=11, @last_name_referee='b', @first_name_referee='a';
+EXEC updateReferee @id_referee=12, @last_name_referee='b', @first_name_referee='a';
 select * from Referees;
 
-EXEC deleteReferee @id_referee=11;
+EXEC deleteReferee @id_referee=12;
 select * from Referees;
 
 select * from RefereesGames;
@@ -225,3 +226,6 @@ select * from RefereesGames;
 
 select * from vw1;
 select * from vw2;
+
+select id_referee from vw1;
+select last_name_referee from vw2;
