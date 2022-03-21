@@ -1,0 +1,10 @@
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\obj\Debug\FootballLeagues.csproj.AssemblyReference.cache
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\obj\Debug\FootballLeagues.Form1.resources
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\obj\Debug\FootballLeagues.Properties.Resources.resources
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\obj\Debug\FootballLeagues.csproj.GenerateResource.cache
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\obj\Debug\FootballLeagues.csproj.CoreCompileInputs.cache
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\bin\Debug\FootballLeagues.exe.config
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\bin\Debug\FootballLeagues.exe
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\bin\Debug\FootballLeagues.pdb
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\obj\Debug\FootballLeagues.exe
+C:\MySpace\3.Workspace\Faculty\SGBD\Teme\Lab1\FootballLeagues\FootballLeagues\obj\Debug\FootballLeagues.pdb
