@@ -93,6 +93,10 @@ GO
 SELECT * FROM Fani;
 SELECT * FROM Meciuri;
 SELECT * FROM Pariu;
+DELETE FROM Pariu;
+DELETE FROM Meciuri;
+DELETE FROM Fani;
+
 GO
 /*EXEC adaugaPariu1 @nume = 'Alex', @echipa_1 = 'CFR', @echipa_2 = 'FCSB', @alegere = '1';*/
 EXEC adaugaPariu1 @nume = '', @echipa_1 = 'CFR', @echipa_2 = 'FCSB', @alegere = '1'
@@ -103,6 +107,7 @@ EXEC adaugaPariu1 @nume = 'Alex', @echipa_1 = 'CFR', @echipa_2 = 'FCSB', @aleger
 GO
 
 
+/*
 CREATE OR ALTER PROCEDURE adaugaPariu2(@nume varchar(64), @echipa_1 varchar(64), @echipa_2 varchar(64), @alegere varchar(64))
 AS 
 BEGIN
@@ -168,11 +173,88 @@ BEGIN
 
 END
 GO
+*/
 
+CREATE OR ALTER PROCEDURE adaugaPariu2(@nume varchar(64), @echipa_1 varchar(64), @echipa_2 varchar(64), @alegere varchar(64))
+AS 
+BEGIN
+
+	BEGIN TRAN
+
+		BEGIN TRY
+
+			IF(dbo.valideazaFan(@nume) = 0) 
+				BEGIN 
+					PRINT 'fan invalid'
+					RAISERROR('Fan invalid!',11,1)
+				END
+			INSERT INTO Fani(nume) VALUES(@nume);
+			PRINT 'adaugaPariu2 fan insert'
+			DECLARE @id_fan INT = SCOPE_IDENTITY();
+			save tran fan_inserat
+
+		END TRY
+		BEGIN CATCH
+
+				ROLLBACK TRAN
+				COMMIT TRAN
+				PRINT 'adaugaPariu2 rollback fan'
+				RETURN
+
+		END CATCH
+
+
+		BEGIN TRY
+
+			IF(dbo.valideazaMeci(@echipa_1, @echipa_2) = 0)
+				BEGIN 
+					PRINT 'meci invalid'
+					RAISERROR('Meci invalid!',11,1);
+				END		
+			INSERT INTO Meciuri(echipa_1, echipa_2) VALUES (@echipa_1, @echipa_2);
+			PRINT 'adaugaPariu2 meci insert'
+			DECLARE @id_meci INT = SCOPE_IDENTITY();
+			save tran meci_inserat
+	
+		END TRY
+		BEGIN CATCH
+
+			ROLLBACK TRAN fan_inserat
+			COMMIT TRAN
+			PRINT 'adaugaPariu2 rollback meci'
+			RETURN
+
+		END CATCH
+
+		BEGIN TRY
+
+			IF(dbo.valideazaPariu(@alegere) = 0)
+					BEGIN
+						PRINT 'pariu invalid'
+						RAISERROR('Pariu invalid',11,1);
+					END
+			INSERT INTO Pariu(alegere, id_meci, id_fan) VALUES(@alegere, @id_meci, @id_fan);
+			PRINT 'adaugaPariu2 pariu insert'
+
+		END TRY
+		BEGIN CATCH
+		
+			ROLLBACK TRAN meci_inserat
+			COMMIT TRAN
+			PRINT 'adaugaPariu2 rollback pariu'
+			RETURN
+			
+		END CATCH
+
+	COMMIT TRAN
+
+END
+GO
 
 SELECT * FROM Fani;
 SELECT * FROM Meciuri;
 SELECT * FROM Pariu;
+
 GO
 /*EXEC adaugaPariu1 @nume = 'Andrei', @echipa_1 = 'Dinamo', @echipa_2 = 'Rapid', @alegere = 'x';*/
 EXEC adaugaPariu2 @nume = '', @echipa_1 = 'Dinamo', @echipa_2 = 'Rapid', @alegere = 'x'

@@ -1,0 +1,10 @@
+rootProject.name = 'Skeleton'
+include 'SkeletonClientFX'
+include 'SkeletonModel'
+include 'SkeletonNetworking'
+include 'SkeletonPersistence'
+include 'SkeletonServer'
+include 'SkeletonServices'
+include 'SkeletonRestServices'
+include 'SkeletonServicesRest'
+

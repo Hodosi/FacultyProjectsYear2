@@ -187,7 +187,7 @@ BEGIN
 END
 
 
-
+INSERT INTO Fani(nume) VALUES('Alex')
 SELECT * FROM Meciuri
 SELECT * FROM Fani
 UPDATE FANI SET nume = 'Alex' WHERE nume = 'Andrei' or nume = 'Ion';
@@ -210,9 +210,8 @@ AS
 		--PRINT 'finish deadlock 1'
 		--PRINT CONVERT(TIME, CURRENT_TIMESTAMP)
 	END
-
-
 GO
+
 CREATE OR ALTER PROCEDURE th2
 AS
 	BEGIN

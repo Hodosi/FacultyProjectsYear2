@@ -9,73 +9,63 @@ using System.Threading.Tasks;
 
 namespace Deadlock
 {
+
     class Program
     {
-        /*
+        public const int reincercari = 3;
+
+        static Barrier barrier = new Barrier(participantCount: 2);
         static void Main(string[] args)
         {
-        }
-        */
-
-        private static SqlConnection connection;
-        static void Main(string[] args)
-        {
-            connection = new SqlConnection(@"Server=DESKTOP-RPSMHMT\SQLEXPRESS;Database=NationalFootballLeagues;Integrated Security=true;");
-            connection.Open();
-
-            Thread thread1 = new Thread(runThread1);
-            Thread thread2 = new Thread(runThread2);
-
+     
+            Thread thread1 = new Thread(delegate ()
+            {
+                callProcedure(1, "[dbo].[th1]");
+            });
+            Thread thread2 = new Thread(delegate ()
+            {
+                callProcedure(2, "[dbo].[th2]");
+            });
             thread1.Start();
             thread2.Start();
-
-            var wait = Console.ReadLine();
+            Console.ReadLine();
         }
-
-        private static void runThread1()
+        public static void callProcedure(int index, string procedureName)
         {
-            Console.WriteLine("Start thread1");
-            try
+            bool executedSucces = false;
+            Console.WriteLine($"Start thread {index}");
+            string connectionString = @"Server=DESKTOP-RPSMHMT\SQLEXPRESS;Database=NationalFootballLeagues;Integrated Security=true;";
+            using (SqlConnection conn = new SqlConnection(connectionString))
             {
-                SqlCommand command = new SqlCommand("th1", connection);
-                command.CommandType = CommandType.StoredProcedure;
-                command.ExecuteNonQuery();
-                Console.WriteLine("Finish thread1");
-            }
-            catch (SqlException ex)
-            {
-                if (ex.Number == 1205)
+                using (SqlCommand command = new SqlCommand($"{procedureName}", conn)
                 {
-                    Console.WriteLine("Deadlock in thread1");
+                    CommandType = CommandType.StoredProcedure
                 }
-                else
+                )
                 {
-                    Console.WriteLine(ex.Message);
+                    for (int i = 0; i < reincercari; i++)
+                    {
+                        Console.WriteLine($"Restart {procedureName} \n");
+                        try
+                        {
+                            conn.Open();
+                            barrier.SignalAndWait();
+                            command.ExecuteNonQuery();
+                            executedSucces = true;
+                            break;
+                        }
+                        catch (Exception)
+                        {
+                            Console.WriteLine($"Deadlock: {procedureName} \n");
+                        }
+                    }
+                    if (executedSucces)
+                        Console.WriteLine($"Finish: {procedureName} \n");
+                    else
+                        Console.WriteLine($"Abort: {procedureName} \n");
                 }
             }
         }
 
-        private static void runThread2()
-        {
-            try
-            {
-                Console.WriteLine("Start thread2");
-                SqlCommand command = new SqlCommand("th2", connection);
-                command.CommandType = CommandType.StoredProcedure;
-                command.ExecuteNonQuery();
-                Console.WriteLine("Finish thread2");
-            }
-            catch (SqlException ex)
-            {
-                if (ex.Number == 1205)
-                {
-                    Console.WriteLine("Deadlock in thread2");
-                }
-                else
-                {
-                    Console.WriteLine(ex.Message);
-                }
-            }
-        }
     }
 }
