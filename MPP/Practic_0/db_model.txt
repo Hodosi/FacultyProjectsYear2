@@ -1,0 +1,3 @@
+GAMES
+
+id | id_game | id_runda | id_player | current(propunere) | punctaj(suma)_obtinuta

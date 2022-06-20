@@ -5,9 +5,11 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import skeleton.network.utils.AbstractServer;
 import skeleton.network.utils.ServerException;
 import skeleton.network.utils.SkeletonRpcConcurrentServer;
+import skeleton.persistence.IGameDataRepository;
 import skeleton.persistence.IHistoryRepository;
 import skeleton.persistence.IMoveRepository;
 import skeleton.persistence.IUserRepository;
+import skeleton.persistence.repository.jdbc.GameDataDbRepository;
 import skeleton.persistence.repository.jdbc.HistoryDbRepository;
 import skeleton.persistence.repository.jdbc.MoveDbRepository;
 import skeleton.persistence.repository.jdbc.UserDbRepository;
@@ -54,10 +56,11 @@ public class StartRpcServer {
             return;
         }
         IUserRepository userRepository = new UserDbRepository(serverProps);
+        IGameDataRepository gameDataRepository = new GameDataDbRepository(serverProps, sessionFactory);
         IMoveRepository moveRepository = new MoveDbRepository(serverProps, sessionFactory);
         IHistoryRepository historyRepository = new HistoryDbRepository(serverProps, sessionFactory);
 
-        ISkeletonServices competitionServerImplementation = new SkeletonServicesImplementation(userRepository, moveRepository, historyRepository);
+        ISkeletonServices competitionServerImplementation = new SkeletonServicesImplementation(userRepository, gameDataRepository, moveRepository, historyRepository);
 
 
         int chatServerPort=defaultPort;

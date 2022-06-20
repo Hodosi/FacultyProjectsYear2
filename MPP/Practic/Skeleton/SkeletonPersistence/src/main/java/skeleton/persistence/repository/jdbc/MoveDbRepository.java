@@ -6,9 +6,14 @@ import org.hibernate.Transaction;
 
 import org.springframework.stereotype.Component;
 import skeleton.model.Move;
+import skeleton.model.User;
 import skeleton.persistence.IMoveRepository;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Properties;
 
 @Component
@@ -35,10 +40,10 @@ public class MoveDbRepository implements IMoveRepository {
         dbUtils = new JdbcUtils(serverProps);
     }
 
+    @Override
     public void setSessionFactory(SessionFactory sessionFactory){
         this.sessionFactory = sessionFactory;
     }
-
 
     @Override
     public int size() {
@@ -57,7 +62,21 @@ public class MoveDbRepository implements IMoveRepository {
 
     @Override
     public void update(Integer integer, Move entity) {
+        try(Session session = sessionFactory.openSession()){
+            Transaction tx=null;
+            try{
+                tx = session.beginTransaction();
 
+                session.update(entity);
+
+                tx.commit();
+
+            } catch(RuntimeException ex){
+                System.err.println("Eroare la update Move "+ex);
+                if (tx!=null)
+                    tx.rollback();
+            }
+        }
     }
 
     @Override
@@ -65,10 +84,31 @@ public class MoveDbRepository implements IMoveRepository {
         return null;
     }
 
-//    @Override
-//    public Iterable<Move> findAll() {
-//        return null;
-//    }
+    @Override
+    public Move findMoveByUsername(String username) {
+        try(Session session = sessionFactory.openSession()) {
+            Transaction tx = null;
+            try {
+                tx = session.beginTransaction();
+
+                Move move = session.createQuery("from Move where username = :username", Move.class)
+                        .setParameter("username", username)
+                        .setMaxResults(1)
+                        .uniqueResult();
+
+                tx.commit();
+
+                return move;
+
+            } catch (RuntimeException ex) {
+                System.err.println("Eroare la find move by username: " + ex);
+                if (tx != null)
+                    tx.rollback();
+            }
+        }
+
+        return null;
+    }
 
     @Override
     public Iterable<Move> findAll() {

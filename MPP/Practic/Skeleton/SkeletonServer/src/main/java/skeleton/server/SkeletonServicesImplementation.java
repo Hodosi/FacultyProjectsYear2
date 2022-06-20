@@ -1,7 +1,7 @@
 package skeleton.server;
 
-import skeleton.model.Move;
-import skeleton.model.User;
+import skeleton.model.*;
+import skeleton.persistence.IGameDataRepository;
 import skeleton.persistence.IHistoryRepository;
 import skeleton.persistence.IMoveRepository;
 import skeleton.persistence.IUserRepository;
@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SkeletonServicesImplementation implements ISkeletonServices {
     private IUserRepository userRepository;
+    private IGameDataRepository gameDataRepository;
     private IMoveRepository moveRepository;
     private IHistoryRepository historyRepository;
 
@@ -28,8 +29,9 @@ public class SkeletonServicesImplementation implements ISkeletonServices {
 //    }
 
 
-    public SkeletonServicesImplementation(IUserRepository userRepository, IMoveRepository moveRepository, IHistoryRepository historyRepository) {
+    public SkeletonServicesImplementation(IUserRepository userRepository, IGameDataRepository gameDataRepository, IMoveRepository moveRepository, IHistoryRepository historyRepository) {
         this.userRepository = userRepository;
+        this.gameDataRepository = gameDataRepository;
         this.moveRepository = moveRepository;
         this.historyRepository = historyRepository;
         loggedClients = new ConcurrentHashMap<>();
@@ -73,23 +75,81 @@ public class SkeletonServicesImplementation implements ISkeletonServices {
         return user;
     }
 
+
+    private int gameId = -1;
+    private int rundaId = -1;
+    private int nrPlayers = 2;
+    private int nrMoves = 0;
+    private boolean gameStarted = false;
+
     @Override
-    public synchronized void startGame(User user, String startGameData) throws SkeletonException {
+    public synchronized void start(String username, String startGameData) throws SkeletonException {
         //save start game data into database
-
-        if(usersInGame.size() < 2){
-            usersInGame.put(user.getUsername(), loggedClients.get(user.getUsername()));
+        if(gameId == -1){
+            gameId = historyRepository.findMaxGameId();
         }
 
-        if(usersInGame.size() == 2){
-            play();
+        if(usersInGame.size() == 0){
+            gameId++;
         }
 
+        if(usersInGame.size() < nrPlayers){
+            GameData gameData = new GameData(username, startGameData);
+            gameData.setIdGame(gameId);
+            gameDataRepository.save(gameData);
+            usersInGame.put(username, loggedClients.get(username));
+        }
+
+        if(usersInGame.size() == nrPlayers && !gameStarted){
+            gameStarted = true;
+            rundaId = 1;
+            notifyStartGame();
+        }
+    }
+
+    @Override
+    public synchronized void move(String username, String gameData) throws SkeletonException {
+        Move move = moveRepository.findMoveByUsername(username);
+        int puncte = move.getPunctaj();
+        puncte+=10;
+        move.setPunctaj(puncte);
+        moveRepository.update(move.getId(), move);
+
+        int idGame = gameId;
+        int idRunda = rundaId;
+        String idPlayer = username;
+        String propunere = "nu zic";
+        int punctaj = 10;
+        History history = new History(idGame, idRunda, idPlayer, propunere, punctaj);
+        historyRepository.save(history);
+
+        nrMoves++;
+        if(nrMoves == nrPlayers){
+            nrMoves = 0;
+            rundaId++;
+            notifyNewMove();
+            if(rundaId > 3){
+                notifyFinishGame();
+            }
+        }
+    }
+
+    @Override
+    public synchronized GameData[] findAllGameData() throws SkeletonException {
+        System.out.println("IMPLEMENTATION - FIND ALL GAME DATA");
+
+        List<GameData> gameDataList = (List<GameData>) gameDataRepository.findAll();
+
+        if(gameDataList.size() == 0){
+            return new GameData[0];
+        }
+
+        return gameDataList.toArray(new GameData[gameDataList.size()]);
     }
 
     @Override
     public synchronized Move[] findCurrentMoves() throws SkeletonException {
-        System.out.println("IMPLEMENTATION - FIND ALL TEST DTOs");
+        System.out.println("IMPLEMENTATION - FIND CURRENT MOVES");
 
         List<Move> moves = (List<Move>) moveRepository.findAll();
 
@@ -100,6 +160,26 @@ public class SkeletonServicesImplementation implements ISkeletonServices {
         return moves.toArray(new Move[moves.size()]);
     }
 
+    @Override
+    public synchronized Clasament[] findClasament() throws SkeletonException {
+        System.out.println("IMPLEMENTATION - FIND CLASAMENT");
+
+        List<Clasament> clasamentList= (List<Clasament>) historyRepository.findClasament(gameId);
+
+        if(clasamentList.size() == 0){
+            return new Clasament[0];
+        }
+
+        return clasamentList.toArray(new Clasament[clasamentList.size()]);
+    }
+
+    private synchronized void notifyStartGame() throws SkeletonException {
+        System.out.println("IMPLEMENTATION - NOTIFY Start Game");
+        for (Map.Entry<String, ISkeletonObserver> entry : usersInGame.entrySet()){
+            entry.getValue().startGame();
+        }
+    }
+
     private synchronized void notifyNewMove() throws SkeletonException {
         System.out.println("IMPLEMENTATION - NOTIFY Start Game");
         for (Map.Entry<String, ISkeletonObserver> entry : usersInGame.entrySet()){
@@ -107,10 +187,10 @@ public class SkeletonServicesImplementation implements ISkeletonServices {
         }
     }
 
-    private synchronized void play() throws SkeletonException{
-        System.out.println("-------------------------");
-        System.out.println("PLAY PLAY PLAY");
-        System.out.println("-------------------------");
-        notifyNewMove();
+    private synchronized void notifyFinishGame() throws SkeletonException {
+        System.out.println("IMPLEMENTATION - NOTIFY Start Game");
+        for (Map.Entry<String, ISkeletonObserver> entry : usersInGame.entrySet()){
+            entry.getValue().finishGame();
+        }
     }
 }

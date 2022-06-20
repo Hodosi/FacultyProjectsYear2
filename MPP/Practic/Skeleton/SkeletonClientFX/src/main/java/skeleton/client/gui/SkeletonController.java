@@ -8,6 +8,8 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import skeleton.model.Clasament;
+import skeleton.model.GameData;
 import skeleton.model.Move;
 import skeleton.model.User;
 import skeleton.services.ISkeletonObserver;
@@ -31,6 +33,8 @@ public class SkeletonController implements Initializable, ISkeletonObserver {
     }
 
     ObservableList<Move> moveObservableList = FXCollections.observableArrayList();
+    ObservableList<GameData> gameDataObservableList = FXCollections.observableArrayList();
+    ObservableList<Clasament> clasamentsObservableList = FXCollections.observableArrayList();
 
     // anchor panes for pages
     @FXML
@@ -49,10 +53,13 @@ public class SkeletonController implements Initializable, ISkeletonObserver {
 
     // main page
     @FXML
-    private TextField textFieldStartGameData;
+    private TextField textFieldGameData;
 
     @FXML
     private Button buttonStartGame;
+
+    @FXML
+    private Button buttonMove;
 
     @FXML
     private TableView<Move> tableViewMove;
@@ -66,12 +73,47 @@ public class SkeletonController implements Initializable, ISkeletonObserver {
     @FXML
     private TableColumn<Move, Integer> tableColumnPunctaj;
 
+    @FXML
+    private TableView<GameData> tableViewGameData;
+
+    @FXML
+    private TableColumn<GameData, String> tableColumnUsernameGameData;
+
+    @FXML
+    private TableColumn<GameData, String> tableColumnData;
+
+    @FXML
+    private TableColumn<GameData, Integer> tableColumnIdGame;
+
+    @FXML
+    private TableView<Clasament> tableViewClasament;
+
+    @FXML
+    private TableColumn<Clasament, String> tableColumnUsernameClasament;
+
+    @FXML
+    private TableColumn<Clasament, Integer> tableColumnPuncteClasament;
+
+
+
     private void initViewMove(){
         tableColumnUsername.setCellValueFactory(new PropertyValueFactory<>("username"));
         tableColumnCurrentState.setCellValueFactory(new PropertyValueFactory<>("currentState"));
         tableColumnPunctaj.setCellValueFactory(new PropertyValueFactory<>("punctaj"));
         tableViewMove.setItems(moveObservableList);
+    }
 
+    private void initViewGameData(){
+        tableColumnUsernameGameData.setCellValueFactory(new PropertyValueFactory<>("username"));
+        tableColumnData.setCellValueFactory(new PropertyValueFactory<>("data"));
+        tableColumnIdGame.setCellValueFactory(new PropertyValueFactory<>("idGame"));
+        tableViewGameData.setItems(gameDataObservableList);
+    }
+
+    private void initViewClasament(){
+        tableColumnUsernameClasament.setCellValueFactory(new PropertyValueFactory<>("username"));
+        tableColumnPuncteClasament.setCellValueFactory(new PropertyValueFactory<>("puncte"));
+        tableViewClasament.setItems(clasamentsObservableList);
     }
 
     @FXML
@@ -114,16 +156,20 @@ public class SkeletonController implements Initializable, ISkeletonObserver {
     private void initMainPage(){
         loginAnchorPane.setVisible(false);
         mainAnchorPane.setVisible(true);
+        buttonMove.setDisable(true);
         initViewMove();
+        initViewGameData();
+        initViewClasament();
     }
 
     @FXML
-    void startGame() {
+    void startGameAction() {
         buttonStartGame.setDisable(true);
-        //tring startGameData = textFieldStartGameData.getText().trim();
-        String startGameData = null;
+        buttonMove.setDisable(false);
+        String startGameData = textFieldGameData.getText().trim();
+        //String startGameData = null;
         try{
-            server.startGame(crtUser, startGameData);
+            server.start(crtUser.getUsername(), startGameData);
         } catch (SkeletonException exception){
             Alert alert = new Alert(Alert.AlertType.INFORMATION);
             alert.setTitle("Skeleton");
@@ -133,18 +179,61 @@ public class SkeletonController implements Initializable, ISkeletonObserver {
         }
     }
 
+    @FXML
+    void move(){
+        buttonMove.setDisable(true);
+        String gameData = textFieldGameData.getText().trim();
+        //String startGameData = null;
+        try{
+            server.move(crtUser.getUsername(), gameData);
+        } catch (SkeletonException exception){
+            Alert alert = new Alert(Alert.AlertType.INFORMATION);
+            alert.setTitle("Skeleton");
+            alert.setHeaderText("Game move failure");
+            alert.setContentText(exception.getMessage());
+            alert.showAndWait();
+        }
+    }
+
+    @Override
+    public void startGame() throws SkeletonException {
+        Platform.runLater(()->{
+            try {
+                gameDataObservableList.clear();
+                gameDataObservableList.setAll(server.findAllGameData());
+            }catch (SkeletonException exception){
+                Alert alertException = new Alert(Alert.AlertType.INFORMATION);
+                alertException.setTitle("Skeleton");
+                alertException.setHeaderText("Move exception");
+                alertException.setContentText(exception.getMessage());
+                alertException.showAndWait();
+            }
+        });
+    }
+
     @Override
     public void newMove() throws SkeletonException {
         Platform.runLater(()->{
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Game started");
-            alert.setHeaderText("start");
-            alert.setContentText("go go go");
-            alert.showAndWait();
-
             try {
+                buttonMove.setDisable(false);
                 moveObservableList.clear();
                 moveObservableList.setAll(server.findCurrentMoves());
+            }catch (SkeletonException exception){
+                Alert alertException = new Alert(Alert.AlertType.INFORMATION);
+                alertException.setTitle("Skeleton");
+                alertException.setHeaderText("Move exception");
+                alertException.setContentText(exception.getMessage());
+                alertException.showAndWait();
+            }
+        });
+    }
+
+    @Override
+    public void finishGame() throws SkeletonException {
+        Platform.runLater(()->{
+            try {
+                clasamentsObservableList.clear();
+                clasamentsObservableList.setAll(server.findClasament());
             }catch (SkeletonException exception){
                 Alert alertException = new Alert(Alert.AlertType.INFORMATION);
                 alertException.setTitle("Skeleton");

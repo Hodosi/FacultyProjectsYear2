@@ -17,9 +17,9 @@
         <property name="format_sql">true</property>
 
 
-<!--        <mapping resource="competition.model/Participant.hbm.xml"/>-->
         <mapping resource="skeleton.model/History.hbm.xml"/>
         <mapping resource="skeleton.model/Move.hbm.xml"/>
+        <mapping resource="skeleton.model/GameData.hbm.xml"/>
 
     </session-factory>
 </hibernate-configuration>

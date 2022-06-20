@@ -1,7 +1,8 @@
 package skeleton.network.rpcprotocol;
 
+import skeleton.model.Clasament;
 import skeleton.model.Move;
-import skeleton.model.StartGameDTO;
+import skeleton.model.GameData;
 import skeleton.model.User;
 import skeleton.services.ISkeletonObserver;
 import skeleton.services.ISkeletonServices;
@@ -67,16 +68,37 @@ public class SkeletonClientRpcWorker implements Runnable, ISkeletonObserver {
     }
 
     @Override
+    public void startGame() throws SkeletonException {
+        System.out.println("WORKER - START GAME");
+        Response resp=new Response.Builder().type(ResponseType.START_GAME).data(null).build();
+        try {
+            sendResponse(resp);
+        } catch (IOException e) {
+            throw new SkeletonException("Sending error: "+e);
+        }
+    }
+
+    @Override
     public void newMove() throws SkeletonException {
         System.out.println("WORKER - NEW MOVE");
         Response resp=new Response.Builder().type(ResponseType.NEW_MOVE).data(null).build();
-        System.out.println("Participant saved");
         try {
             sendResponse(resp);
         } catch (IOException e) {
             throw new SkeletonException("Sending error: "+e);
         }
 
+    }
+
+    @Override
+    public void finishGame() throws SkeletonException {
+        System.out.println("WORKER - START GAME");
+        Response resp=new Response.Builder().type(ResponseType.FINISH_GAME).data(null).build();
+        try {
+            sendResponse(resp);
+        } catch (IOException e) {
+            throw new SkeletonException("Sending error: "+e);
+        }
     }
 
 
@@ -129,9 +151,9 @@ public class SkeletonClientRpcWorker implements Runnable, ISkeletonObserver {
 
         if (request.type() == RequestType.START_GAME){
             System.out.println("Start Game request");
-            StartGameDTO startGameDTO = (StartGameDTO) request.data();
+            GameData gameData = (GameData) request.data();
             try{
-                server.startGame(startGameDTO.getUser(), startGameDTO.getStartGameData());
+                server.start(gameData.getUsername(), gameData.getData());
                 return okResponse;
             }
             catch (SkeletonException e){
@@ -139,11 +161,47 @@ public class SkeletonClientRpcWorker implements Runnable, ISkeletonObserver {
             }
         }
 
+        if (request.type() == RequestType.MOVE){
+            System.out.println("Start Game request");
+            GameData gameData = (GameData) request.data();
+            try{
+                server.move(gameData.getUsername(), gameData.getData());
+                return okResponse;
+            }
+            catch (SkeletonException e){
+                return new Response.Builder().type(ResponseType.ERROR).data(e.getMessage()).build();
+            }
+        }
+
+        if(request.type() == RequestType.FIND_GAME_DATA){
+            System.out.println("Find GAME DATA");
+            try{
+                GameData[] gameData = server.findAllGameData();
+                return new Response.Builder().type(ResponseType.FIND_GAME_DATA).data(gameData).build();
+
+            }
+            catch (SkeletonException e){
+                return new Response.Builder().type(ResponseType.ERROR).data(e.getMessage()).build();
+            }
+        }
+
         if(request.type() == RequestType.FIND_CURRENT_MOVE){
-            System.out.println("Find all test dto request");
+            System.out.println("Find CURRENT MOVE");
             try{
                 Move[] moves = server.findCurrentMoves();
                 return new Response.Builder().type(ResponseType.FIND_CURRENT_MOVE).data(moves).build();
+
+            }
+            catch (SkeletonException e){
+                return new Response.Builder().type(ResponseType.ERROR).data(e.getMessage()).build();
+            }
+        }
+
+        if(request.type() == RequestType.FIND_CLASAMENT){
+            System.out.println("Find CLASAMENT");
+            try{
+                Clasament[] clasaments = server.findClasament();
+                return new Response.Builder().type(ResponseType.FIND_CLASAMENT).data(clasaments).build();
 
             }
             catch (SkeletonException e){
